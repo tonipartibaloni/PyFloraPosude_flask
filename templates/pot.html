@@ -1,0 +1,128 @@
+{% extends "layout.html" %}
+{% block menu %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('pots') }}">Posude</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('plants') }}">Biljke</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('users') }}">Korisnici</a>
+        </li>
+      </ul>
+    </div>
+    <div class="navbar-nav ml-auto">
+        <form class="form-inline" action="{{ url_for('logout') }}" method="POST">
+          <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Odjava</button>
+        </form>
+      </div>
+  </nav>
+{% endblock %}
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <a href="{{ url_for('generate_sensors', pot_id=pot.id, action_taken=False) }}" class="btn btn-primary me-2">Dohvati nova očitanja senzora</a>
+        <a href="{{ url_for('generate_sensors', pot_id=pot.id, action_taken=True) }}" class="btn btn-primary">Poduzmi popravne radnje</a>
+    </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+          {% if pot.plant_id is not none %}
+            <img src="{{ plant.image }}" class="img-fluid">
+          {% else %}
+            <img src="/static/empty_pot.png" class="img-fluid">
+          {% endif %}
+        </div>
+        <div class="col-md-6">
+            <form>
+                <div class="mb-3">
+                    <label for="inputName" class="form-label">Naziv</label>
+                    <input type="text" class="form-control" id="inputName" value="{{pot.name}}">
+                </div>
+                <div class="mb-3">
+                    <label for="inputType" class="form-label">Status</label>
+                    <input type="text" class="form-control" id="inputType" value="{{pot.status}}">
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-end">
+                        <button type="button" class="btn btn-primary me-2">Spremni promjene</button>
+                        <button type="button" class="btn btn-danger me-2">Obriši posudu</button>
+                        <button type="button" class="btn btn-secondary">Osvježi</button>
+                        <button type="button" class="btn btn-secondary" onclick="window.location='/pots'">Povratak</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container my-5">
+  <div class="row">
+      <div class="col-md-12">
+          <h4 class="text-center">Očitanja senzora</h4>
+      <canvas id="sensorChart"></canvas>
+      </div>
+  </div>
+</div>
+<script type="text/javascript">
+  var sensorData = `{{ sensor_data | safe }}`;
+  var sensorData = JSON.parse(sensorData);
+  var sensorTime = [];
+  var sensorTemperature = [];
+  var sensorSoilHumidity = [];
+  var sensorLight = [];
+  var sensorSoilPh = [];
+  for (var i in sensorData) {
+      sensorTime.push(sensorData[i].time);
+      sensorTemperature.push(sensorData[i].temperature);
+      sensorSoilHumidity.push(sensorData[i].soil_humidity);
+      sensorLight.push(sensorData[i].light);
+      sensorSoilPh.push(sensorData[i].soil_ph);
+  }
+  var ctx = document.getElementById('sensorChart').getContext('2d');
+  var sensorChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+          labels: sensorTime,
+          datasets: [{
+              label: 'Temperatura',
+              data: sensorTemperature,
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1
+          },
+          {
+              label: 'Vlažnost tla',
+              data: sensorSoilHumidity,
+              backgroundColor: 'rgba(54, 162, 235, 0.2)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+          },
+          {
+              label: 'Jačina svjetla',
+              data: sensorLight,
+              backgroundColor: 'rgba(255, 206, 86, 0.2)',
+              borderColor: 'rgba(255, 206, 86, 1)',
+              borderWidth: 1
+          },
+          {
+              label: 'pH tla',
+              data: sensorSoilPh,
+              backgroundColor: 'rgba(0, 0, 40, 0.2)',
+              borderColor: 'rgba(0, 0, 40, 1)',
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: false
+              }
+          }
+      }
+  });
+</script>
+{% endblock %}

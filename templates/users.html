@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+{% block menu %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('pots') }}">Posude</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('plants') }}">Biljke</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('users') }}">Korisnici</a>
+      </li>
+    </ul>
+  </div>
+  <div class="navbar-nav ml-auto">
+    <form class="form-inline" action="{{ url_for('logout') }}" method="POST">
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Odjava</button>
+    </form>
+  </div>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="container my-5">
+  <div class="row mb-3">
+    <div class="col-md-12">
+      <h2>Upravljanje korisnicima</h2>
+    </div>
+    <div class="col-md-12 mt-3 mb-5">
+      <div class="dropdown float-end">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          Odaberite korisnika
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="userDropdown">
+          {% for user in users %}
+          <li><a class="dropdown-item" href="#" onclick="selectUser('{{ user.id }}')">{{ user.username }}</a></li>
+          {% endfor %}
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#" onclick="selectUser('new')">Novi korisnik</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <form method="POST" id="userForm">
+    {{ form.csrf_token }}
+    <div class="row mb-12">
+      <div style="display: none;">
+        {{ form.user(class="form-control", id="inputUserId") }}
+      </div>
+      <div class="col-md-12">
+        {{ form.username.label(class="form-label") }}
+        {{ form.username(class="form-control", id="inputUsername") }}
+      </div>
+      <div class="col-md-12">
+        {{ form.password.label(class="form-label") }}
+        {{ form.password(class="form-control", id="inputPassword") }}
+      </div>
+      <div class="col-md-12">
+        {{ form.name.label(class="form-label") }}
+        {{ form.name(class="form-control", id="inputName") }}
+      </div>
+      <div class="col-md-12">
+        {{ form.surname.label(class="form-label") }}
+        {{ form.surname(class="form-control", id="inputSurname") }}
+      </div>
+      <div class="col-md-12">
+        {{ form.email.label(class="form-label") }}
+        {{ form.email(class="form-control", id="inputEmail") }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 text-end">
+        {{ form.save_changes(class="btn btn-primary me-2", id="saveBtn") }}
+        {{ form.delete_user(class="btn btn-danger me-2", id="deleteBtn") }}
+        {{ form.refresh_page(class="btn btn-secondary", id="refreshBtn", formnovalidate="formnovalidate") }}
+      </div>
+    </div>
+  </form>
+</div>
+<script type="text/javascript">
+  var users = `{{ users_json | safe }}`;
+  users = JSON.parse(users);
+  var userDropdown = document.getElementById("userDropdown");
+  var inputUserId = document.getElementById("inputUserId");
+  var inputUsername = document.getElementById("inputUsername");
+  var inputPassword = document.getElementById("inputPassword");
+  var inputName = document.getElementById("inputName");
+  var inputSurname = document.getElementById("inputSurname");
+  var inputEmail = document.getElementById("inputEmail");
+
+  function selectUser(id) {
+    if (id === 'new') {
+      var maxIdUser = users.reduce((maxUser, currentUser) => {
+        return currentUser.id > maxUser.id ? currentUser : maxUser;
+        });
+      inputUserId.value = maxIdUser.id + 1;
+      console.log(inputUserId.value);
+      inputUsername.value = "";
+      inputPassword.value = "";
+      inputName.value = "";
+      inputSurname.value = "";
+      inputEmail.value = "";
+    } else {
+      var user = users.find(user => user.id == id);
+      console.log(user);
+      inputUserId.value = user.id;
+      console.log(inputUserId.value);
+      inputUsername.value = user.username;
+      inputPassword.value = user.password;
+      inputName.value = user.name;
+      inputSurname.value = user.surname;
+      inputEmail.value = user.email;
+    }
+  }
+</script>
+{% endblock %}

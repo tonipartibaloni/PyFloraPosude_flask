@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+{% block menu %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('pots') }}">Posude</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('plants') }}">Biljke</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('users') }}">Korisnici</a>
+      </li>
+    </ul>
+  </div>
+  <div class="navbar-nav ml-auto">
+    <form class="form-inline" action="{{ url_for('logout') }}" method="POST">
+      <button class="btn btn-outline-secondary my-2 my-sm-0" type="submit">Odjava</button>
+    </form>
+  </div>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-12 text-center">
+    <a href="{{ url_for('generate_sensors_all', action_taken=False) }}" class="btn btn-primary me-2">Dohvati nova očitanja senzora za sve posude</a>
+    <a href="{{ url_for('generate_sensors_all', action_taken=True) }}" class="btn btn-primary">Poduzmi popravne radnje za sve posude</a>
+</div>
+</div>
+<div class="row">
+    {% for pot in pots %}
+    <div class="col-md-3 mb-4">
+      {% if pot.plant_id is none %}
+      <div class="card" onclick="window.location='/pot/{{ pot.id }}'">
+        <img src="/static/empty_pot.png" class="card-img-top" alt="Prazna posuda">
+        <div class="card-body">
+          <h5 class="card-title">{{ pot.name }}</h5>
+          <p class="card-text">Prazna posuda</p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item" style="color: aqua;">Status: Prazna</li>
+        </ul>
+        </div>
+        {% else %}
+          {% for plant in plants %}
+            {% if plant.id == pot.plant_id %}
+            <div class="card" onclick="window.location='/pot/{{ pot.id }}'">
+              <img src="{{ plant.image }}" class="card-img-top" alt="{{ plant.name }}">
+              <div class="card-body">
+                <h5 class="card-title">{{ pot.name }}</h5>
+                <p class="card-text">{{ plant.name }}</p>
+              </div>
+            {% endif %}
+            {% endfor %}
+              <ul class="list-group list-group-flush">
+                {% if pot.status == 1 %}
+                  <li class="list-group-item">Status: OK</li>
+                {% elif pot.status == 2 %}
+                  <li class="list-group-item" style="color: crimson;">Status: Potrebna akcija</li>
+                {% else %}
+                  <li class="list-group-item" style="color: crimson;">Status: Neispravna</li>
+                {% endif %}
+              </ul>
+            </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+    <div class="col-md-3 mb-4">
+      <div class="card" onclick="window.location='/pot/new'">
+        <img src="/static/add.png" class="card-img-top" alt="Dodaj novu posudu">
+        <div class="card-body">
+          <h5 class="card-title">Nova posuda</h5>
+          <p class="card-text">Biljka?</p>
+        </div>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">Dodaj novu posudu</li>
+        </ul>
+      </div>
+    </div>
+</div>
+{% endblock %}
