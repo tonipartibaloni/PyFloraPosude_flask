@@ -65,11 +65,11 @@ def sensors_to_json(sensors):
 def pot_status_update(pot : Pot, last_sensor : SensorData):
     if pot.status != 0 and pot.plant_id is not None:
         plant = db_session.query(Plant).filter_by(id=pot.plant_id).first()
-        if last_sensor.soil_humidity not in range(plant.optimal_soil_humidity_min, plant.optimal_soil_humidity_max):
+        if last_sensor.soil_humidity not in range(plant.optimal_soil_humidity_min, plant.optimal_soil_humidity_max + 1):
             pot.status = 2
-        elif last_sensor.light not in range(plant.optimal_light_min, plant.optimal_light_max):
+        elif last_sensor.light not in range(plant.optimal_light_min, plant.optimal_light_max + 1):
             pot.status = 2
-        elif last_sensor.soil_ph < plant.optimal_soil_ph_min or last_sensor.soil_ph > plant.optimal_soil_ph_max:
+        elif last_sensor.soil_ph < plant.optimal_soil_ph_min or last_sensor.soil_ph > plant.optimal_soil_ph_max + 1:
             pot.status = 2
         else:
             pot.status = 1
