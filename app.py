@@ -11,12 +11,13 @@ import datetime
 import json
 import os
 from html import escape
+from config import SECRET_KEY
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///PyFloraPosude.db'
-app.config['SECRET_KEY'] = "H3g2L4nyNqN8yNQeC9yhtTyov7mkvbQg"
+app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['UPLOAD_FOLDER'] = "static/"
 fs.Session(app)
