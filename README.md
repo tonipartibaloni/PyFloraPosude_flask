@@ -26,5 +26,5 @@ Contributions to PyFloraPosude are welcome! If you find any issues or have sugge
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [CC0-1.0 License](LICENSE).
 
