@@ -1,6 +1,7 @@
 import sqlalchemy as db
 from sqlalchemy.orm import Session, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
+from config import ADMIN_PASS
 
 Base = declarative_base()
 
@@ -66,10 +67,8 @@ Base.metadata.create_all(bind=db_engine)
 if __name__ == "__main__":
     with Session(bind=db_engine) as session:
         # fill database with data
-        user = User(username="admin", password="2myxFFhgGiUUmUm", name="Toni", surname="Pavlović", email="toni.pavl@gmail.com")
+        user = User(username="admin", password=ADMIN_PASS, name="Toni", surname="Pavlović", email="toni.pavl@gmail.com")
         session.add(user)
-        user_test = User(username="test", password="12345", name="Test", surname="Test", email="")
-        session.add(user_test)
 
         plant1 = Plant(name='Svekrvin jezik', type='Unutrašnja', optimal_soil_humidity_min=30, optimal_soil_humidity_max=50, optimal_light_min=800, optimal_light_max=1600, optimal_soil_ph_min=5.5, optimal_soil_ph_max=7.0, image='/static/svekrvin_jezik.jpg')
         session.add(plant1)

@@ -2,9 +2,10 @@ from random import randint, uniform
 from sqlalchemy.orm import Session
 from database import db_engine, Plant, Pot, SensorData
 from datetime import datetime, timedelta
+from config import API_KEY
 import requests
 
-API_KEY = "53fc3710b26d52a872f39437022c4629"
+
 URL = "http://api.openweathermap.org/data/2.5/weather?"
 
 def generate_sensor_values(pot_id, action_taken):
